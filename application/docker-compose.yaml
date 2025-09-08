@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+  number-guesser:
+    build: .
+    image: number-guesser:local
+    ports:
+      - "8080:80"
+    restart: unless-stopped
