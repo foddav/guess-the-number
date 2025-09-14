@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    DOCKER_IMAGE = "foddav/guess-the-number"
+    DOCKER_IMAGE = "${env.DOCKER_USER}/guess-the-number"
     IMAGE_TAG   = "${env.BUILD_NUMBER}"
     AWS_DEFAULT_REGION = 'eu-central-1'
   }

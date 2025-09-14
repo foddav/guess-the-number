@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: number-guesser
-          image: foddav/guess-the-number:latest
+          image: ${DOCKER_IMAGE}:latest
           ports:
             - containerPort: 80
           resources:
