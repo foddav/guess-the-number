@@ -1,7 +1,7 @@
 # Guess the Number - CI/CD Pipeline with Jenkins, Docker & Kubernetes
 
 This project is a **simple React application** ("Guess the Number" game) wrapped into a **professional DevOps workflow**.  
-It demonstrates how to containerize an app with Docker, deploy it on Kubernetes, and automate the process with a Jenkins CI/CD pipeline.
+It demonstrates how to containerize an app with Docker, deploy it to an AWS Cluster with Kubernetes, and automate the process with a Jenkins CI/CD pipeline.
 This project was created as part of my DevOps learning journey and portfolio.
 
 ---
@@ -14,11 +14,11 @@ The goal is to guess the correct number before running out of attempts or points
 ---
 
 ## 📌 Project Goals
-- Show a **production-style pipeline** setup.  
-- Demonstrate knowledge of:
+- Show a **production-style pipeline** setup with:  
   - **Docker** (containerization)  
   - **Kubernetes** (deployment & service management)  
   - **Jenkins** (CI/CD automation)  
+
 ---
 
 ## ⚙️ Technologies Used
@@ -50,10 +50,77 @@ The goal is to guess the correct number before running out of attempts or points
 ---
 
 ## ▶️ Test the Game (Docker Compose)
-You can test the game without Jenkins or Kubernetes:
+You can test the game without Jenkins or Kubernetes:  
 
-1. docker compose up --build
-2. Open http://localhost:8080
+1. cd application
+2. docker compose up --build
+3. Open http://localhost:8080
 
 ---
-## 
+
+## 🚀 Deployment process & CI/CD (short guide)  
+This project includes a complete CI/CD flow: Jenkins builds a Docker image, pushes it to DockerHub, then deploys the image to a Kubernetes cluster. You can either provision an example AWS/EKS cluster with the included Terraform or deploy to your own existing cluster.
+
+Note: This repository **does not include a Jenkins server image**. Start Jenkins however you prefer (local Docker, cloud VM, etc.).  
+
+### Steps  
+First, you need to have a Docker Hub username and password, and you need to create a new Docker Hub repository named **guess-the-number**.  
+
+I provided an example AWS terraform infrastructure, but if you already have an existing one, skip the firs step.  
+
+### make a new AWS Cluster with terraform  
+1. cd infrastructure_example/terraform  
+terraform init  
+terraform apply  
+
+### update kubeconfig for your workstation and check the current-context  
+2. aws eks update-kubeconfig --region <region> --name <cluster-name>  
+kubectl config current-context  
+
+### copy kubeconfig for Jenkins and add it as a Jenkins Secret file  
+3. cp ~/.kube/config ~/configfile  
+add new credential on Jenkins:  
+- kind: secretfile  
+- file: ~/configfile  
+- id: kubeconfig  
+
+### add AWS Access and Secret keys to Jenkins  
+4. add new credential on Jenkins:  
+- kind: Username with Password  
+- Username: AWS_ACCES_KEY  
+- Password: AWS_SECRET_KEY  
+- id: aws-creds  
+
+### add your DockerHub to Jenkins  
+5. add new credential on Jenkins:  
+- kind: Username with Password  
+- Username: dockerhub username  
+- Password: dockerhub password  
+- id: dockerhub-creds  
+
+### create a new pipeline  
+6. create a new pipeline item:  
+- New Item → Pipeline  
+- Definition: Pipeline script from SCM → Git  
+- Repository: https://github.com/<your-user>/guess-the-number.git  
+- Branch: */main (or your branch)  
+- Script Path: Jenkinsfile  
+(Note: if you run Jenkins in a way that it has a publicly accessible address, you can add that URL as a webhook to the GitHub repository and thus automate the deployment after pushes.)  
+
+### run the pipeline  
+7. Build Now on Jenkins --> wait until success  
+
+### check the app in browser  
+8. kubectl get svc number-guesser  
+find EXTERNAL-IP and open it in browser  
+
+### CI/CD test (with webhook automatisation)  
+9. if you have a webhook on the GitHub repository, you can make new commits with some changes, and the new deployment will be automatically done  
+
+### cleanup (delete cluster, if you used the Terraform example)  
+10. cd infrastructure_example/terraform  
+terraform destroy  
+
+## Short notes  
+- The kubernetes/deployment.yaml contains a placeholder ${DOCKER_IMAGE}. The pipeline uses envsubst to replace it with the real image name before applying the manifest.  
+- Keep your credentials (kubeconfig, DockerHub, AWS keys) out of the repo — they must be uploaded to Jenkins as credentials.
