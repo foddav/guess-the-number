@@ -42,6 +42,7 @@ pipeline {
               export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
               export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
               export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+              export DOCKER_IMAGE=$DOCKER_USER/guess-the-number
               envsubst < deployment.yaml | kubectl apply -f -
               kubectl apply -f service.yaml
               kubectl rollout status deployment/number-guesser --timeout=120s || true
