@@ -14,12 +14,11 @@ The goal is to guess the correct number before running out of attempts or points
 ---
 
 ## 📌 Project Goals
-- Show a **junior-friendly but production-style pipeline** setup.  
+- Show a **production-style pipeline** setup.  
 - Demonstrate knowledge of:
   - **Docker** (containerization)  
   - **Kubernetes** (deployment & service management)  
   - **Jenkins** (CI/CD automation)  
-
 ---
 
 ## ⚙️ Technologies Used
@@ -50,9 +49,11 @@ The goal is to guess the correct number before running out of attempts or points
 
 ---
 
-## ▶️ Running Locally (Docker Compose)
-You can test the app without Jenkins or Kubernetes:
+## ▶️ Test the Game (Docker Compose)
+You can test the game without Jenkins or Kubernetes:
 
 1. docker compose up --build
 2. Open http://localhost:8080
 
+---
+## 
