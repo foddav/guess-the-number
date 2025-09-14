@@ -66,7 +66,7 @@ Note: This repository **does not include a Jenkins server image**. Start Jenkins
 ### Steps  
 First, you need to have a Docker Hub username and password, and you need to create a new Docker Hub repository named **guess-the-number**.  
 
-I provided an example AWS terraform infrastructure, but if you already have an existing one, skip the firs step.  
+I provided an example AWS terraform infrastructure, but if you already have an existing one, skip the first step.  
 
 ### make a new AWS Cluster with terraform  
 1. cd infrastructure_example/terraform  
@@ -74,7 +74,7 @@ terraform init
 terraform apply  
 
 ### update kubeconfig for your workstation and check the current-context  
-2. aws eks update-kubeconfig --region <region> --name <cluster-name>  
+2. aws eks update-kubeconfig --region (region) --name (cluster-name)  
 kubectl config current-context  
 
 ### copy kubeconfig for Jenkins and add it as a Jenkins Secret file  
@@ -102,7 +102,7 @@ add new credential on Jenkins:
 6. create a new pipeline item:  
 - New Item → Pipeline  
 - Definition: Pipeline script from SCM → Git  
-- Repository: https://github.com/<your-user>/guess-the-number.git  
+- Repository: https://github.com/(your-user)/guess-the-number.git  
 - Branch: */main (or your branch)  
 - Script Path: Jenkinsfile  
 (Note: if you run Jenkins in a way that it has a publicly accessible address, you can add that URL as a webhook to the GitHub repository and thus automate the deployment after pushes.)  
