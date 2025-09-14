@@ -1,0 +1,11 @@
+# Node.js
+node_modules
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# System files
+.DS_Store

@@ -32,20 +32,19 @@ pipeline {
 
     stage('Deploy to Kubernetes') {
       steps {
-        dir('application') {
-          withCredentials([
-            file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE'),
-            usernamePassword(credentialsId: 'aws-creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')
-          ]) {
-            sh '''
-              export KUBECONFIG=$KUBECONFIG_FILE
-              export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-              export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-              export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
-              kubectl apply -f kubernetes/
-              kubectl rollout status deployment/number-guesser --timeout=120s || true
-            '''
-          }
+        withCredentials([
+          file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE'),
+          usernamePassword(credentialsId: 'aws-creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')
+        ]) {
+          sh '''
+            export KUBECONFIG=$KUBECONFIG_FILE
+            export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+            export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+            envsubst < kubernetes/deployment.yaml | kubectl apply -f -
+            kubectl apply -f kubernetes/
+            kubectl rollout status deployment/number-guesser --timeout=120s || true
+          '''
         }
       }
     }
