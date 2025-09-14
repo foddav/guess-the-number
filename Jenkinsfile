@@ -43,7 +43,6 @@ pipeline {
               export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
               export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
               envsubst < deployment.yaml | kubectl apply -f -
-              kubectl apply -f .
               kubectl rollout status deployment/number-guesser --timeout=120s || true
             '''
           }
