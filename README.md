@@ -71,7 +71,7 @@ First, you need to have **Docker Hub username and password**, and you need to cr
   
 I provided an example AWS terraform infrastructure, but if you already have an existing one, skip the first step.  
 
-1. make a new AWS Cluster with terraform (if you already have one, skip this step)  
+### 1. make a new AWS Cluster with terraform (if you already have one, skip this step)  
 ```
 cd infrastructure_example/terraform  
 terraform init  
@@ -80,13 +80,13 @@ terraform apply
 This will create infrastructure on AWS: a VPC with subnets, and an EKS cluster with nodes.
 You need to wait until it is done and fully set up.  
   
-2. update kubeconfig for your workstation and check the current-context  
+### 2. update kubeconfig for your workstation and check the current-context  
 ```
 aws eks update-kubeconfig --region <region> --name <cluster-name>  
 kubectl config current-context  
 ```  
   
-3. copy kubeconfig for Jenkins and add it as a Jenkins Secret file  
+### 3. copy kubeconfig for Jenkins and add it as a Jenkins Secret file  
 ```
 cp ~/.kube/config ~/configfile  
 ```  
@@ -95,7 +95,7 @@ add new credential on Jenkins:
 - file: ~/configfile  
 - id: kubeconfig  
   
-4. add AWS Access and Secret keys to Jenkins  
+### 4. add AWS Access and Secret keys to Jenkins  
   
 add new credential on Jenkins:  
 - kind: Username with Password  
@@ -103,7 +103,7 @@ add new credential on Jenkins:
 - Password: AWS_SECRET_KEY  
 - id: aws-creds  
   
-5. add your DockerHub credentials to Jenkins  
+### 5. add your DockerHub credentials to Jenkins  
   
 add new credential on Jenkins:  
 - kind: Username with Password  
@@ -111,7 +111,7 @@ add new credential on Jenkins:
 - Password: your-dockerhub-password  
 - id: dockerhub-creds  
   
-6. create a new pipeline  
+### 6. create a new pipeline  
   
 create a new pipeline item:  
 - New Item → Pipeline  
@@ -122,24 +122,26 @@ create a new pipeline item:
   
 (Note: if you run Jenkins in a way that it has a publicly accessible address, you can add that URL as a webhook to the GitHub repository and thus automate the deployment after pushes.)  
 
-7. run the pipeline  
+### 7. run the pipeline  
 Build Now on Jenkins --> wait until success  
 
-8. check the app in browser  
+### 8. check the app in browser  
 ```
 kubectl get svc number-guesser  
 ```  
 find the EXTERNAL-IP on terminal and open it in browser  
   
-9. CI/CD test (with webhook automatisation)  
+### 9. CI/CD test (with webhook automatisation)  
 if you have a webhook on the GitHub repository, you can make new commits with some changes in code, and after push the new deployment will be automatically done  
   
-10. cleanup (delete cluster, if you used the Terraform example)  
+### 10. cleanup (delete cluster, if you used the Terraform example)  
 ```
 cd infrastructure_example/terraform  
 terraform destroy  
 ```  
   
+---  
+
 ## Short notes  
 - The kubernetes/deployment.yaml contains a placeholder ${DOCKER_IMAGE}. The pipeline uses envsubst to replace it with the real image name before applying the manifest.  
 - Keep your credentials (kubeconfig, DockerHub, AWS keys) out of the repo — they must be uploaded to Jenkins as credentials.
